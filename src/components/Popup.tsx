@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Col from 'react-bootstrap/esm/Col';
 import Form from 'react-bootstrap/esm/Form';
 import {Button} from "react-bootstrap";
@@ -6,18 +6,16 @@ import selectedStringStore from "../stores/SelectedStringStore";
 import {observer} from "mobx-react-lite";
 
 const Popup = () => {
-    const [selectedText, setSelectedText] = useState("");
 
-    const { translatedString, translateString } = selectedStringStore;
-
-    chrome.tabs.executeScript(
-        { code: "window.getSelection().toString();" },
-        selection => setSelectedText(selection[0])
-    )
 
     const onTranslateBtnClicked = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
-        translateString(selectedText);
+        selectedStringStore.translateString();
+    }
+
+    const onSaveBtnClicked = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault();
+        selectedStringStore.saveTranslation();
     }
 
     return (
@@ -25,22 +23,33 @@ const Popup = () => {
             <Form.Control
                 type="text"
                 placeholder="Source test"
-                onChange={e => setSelectedText(e.target.value)}
-                value={selectedText}
+                onChange={e => selectedStringStore.setSelectedString(e.target.value)}
+                value={selectedStringStore.selectedString}
                 className="mb-1"
             />
             <Form.Control
                 type="text"
                 placeholder="Translated text"
-                value={translatedString}
+                onChange={e => selectedStringStore.setTranslatedString(e.target.value)}
+                value={selectedStringStore.translatedString}
                 className="mb-1"
             />
-            <Button
-                onClick={onTranslateBtnClicked}
-                className="w-100"
-            >
-                Translate
-            </Button>
+            <div className="d-flex">
+                <Button
+                    onClick={onTranslateBtnClicked}
+                    variant="dark"
+                    className="w-100"
+                >
+                    Translate
+                </Button>
+                <Button
+                    onClick={onSaveBtnClicked}
+                    variant="dark"
+                    className="w-100 ms-1"
+                >
+                    Save
+                </Button>
+            </div>
         </Col>
     );
 };

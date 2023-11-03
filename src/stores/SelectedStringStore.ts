@@ -11,16 +11,18 @@ interface ResponseData {
 
 class SelectedStringStore {
     private translatorUrl = "https://api.mymemory.translated.net/get"
+    private serverUrl = "http://localhost:8086/api/phrases"
 
+    selectedString = "";
     translatedString = "";
 
     constructor() {
         makeAutoObservable(this);
     }
 
-    public translateString = async (str: string) => {
+    public translateString = async () => {
         const urlParams = new URLSearchParams([
-            ["q", str], ["langpair", "en|ru"]
+            ["q", this.selectedString], ["langpair", "en|ru"]
         ]);
 
         const { data } = await axios.get<TranslatorResponse>(
@@ -29,6 +31,24 @@ class SelectedStringStore {
 
         this.translatedString = data.responseData.translatedText;
     }
+
+    public saveTranslation = async () => {
+        await axios.post(
+            this.serverUrl, {
+                phrase: this.selectedString,
+                translation: this.translatedString
+            }
+        );
+    }
+
+    public setSelectedString = (selectedString: string) => {
+        this.selectedString = selectedString;
+    }
+
+    public setTranslatedString = (translatedString: string) => {
+        this.translatedString = translatedString;
+    }
+
 }
 
 const selectedStringStore = new SelectedStringStore();
