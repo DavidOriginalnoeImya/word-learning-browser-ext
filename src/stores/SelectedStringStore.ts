@@ -31,7 +31,6 @@ class SelectedStringStore {
             );
 
             this.translatedString = data.responseData.translatedText;
-            this.saveTranslation();
         }
     }
 
