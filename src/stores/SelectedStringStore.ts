@@ -21,15 +21,18 @@ class SelectedStringStore {
     }
 
     public translateString = async () => {
-        const urlParams = new URLSearchParams([
-            ["q", this.selectedString], ["langpair", "en|ru"]
-        ]);
+        if (this.selectedString) {
+            const urlParams = new URLSearchParams([
+                ["q", this.selectedString], ["langpair", "en|ru"]
+            ]);
 
-        const { data } = await axios.get<TranslatorResponse>(
-            this.translatorUrl, { params: urlParams }
-        );
+            const {data} = await axios.get<TranslatorResponse>(
+                this.translatorUrl, {params: urlParams}
+            );
 
-        this.translatedString = data.responseData.translatedText;
+            this.translatedString = data.responseData.translatedText;
+            this.saveTranslation();
+        }
     }
 
     public saveTranslation = async () => {

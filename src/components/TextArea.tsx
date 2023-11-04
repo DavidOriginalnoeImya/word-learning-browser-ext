@@ -3,9 +3,10 @@ import Form from "react-bootstrap/Form";
 
 interface ITextArea {
     placeholder: string;
+    value: string;
 }
 
-const TextArea: FC<ITextArea> = ({ placeholder }) => {
+const TextArea: FC<ITextArea> = ({ placeholder, value }) => {
     const textAreaStyle: CSSProperties = {
         border: "none",
         resize: "none",
@@ -19,6 +20,7 @@ const TextArea: FC<ITextArea> = ({ placeholder }) => {
             as="textarea"
             rows={2}
             placeholder={placeholder}
+            value={value}
         />
     );
 };
