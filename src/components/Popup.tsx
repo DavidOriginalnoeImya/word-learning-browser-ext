@@ -5,17 +5,21 @@ import {observer} from "mobx-react-lite";
 import TextArea from "./TextArea";
 import Splitter from "./Splitter";
 import ControlPanel from "./ControlPanel";
+import onTextSelectChrome from "../utils/onTextSelectChrome";
 
 const Popup = () => {
 
-    chrome.tabs.executeScript(
-        { code: "window.getSelection().toString();" },
-        selection => selectedStringStore.setSelectedString(selection[0])
-    )
+    useEffect(() => {
+        onTextSelectChrome(selectedStringStore.setSelectedString);
+    }, []);
 
     useEffect(() => {
-        selectedStringStore.translateString();
-    }, []);
+        const delayDebounceFn = setTimeout(() => {
+            selectedStringStore.translateString();
+        }, 500)
+
+        return () => clearTimeout(delayDebounceFn)
+    }, [selectedStringStore.selectedString])
 
     const onSaveClicked = () => {
         selectedStringStore.saveTranslation();
@@ -28,11 +32,13 @@ const Popup = () => {
                 <TextArea
                     placeholder="Source text"
                     value={selectedStringStore.selectedString}
+                    onChange={selectedStringStore.setSelectedString}
                 />
                 <Splitter/>
                 <TextArea
                     placeholder="Translation"
                     value={selectedStringStore.translatedString}
+                    onChange={selectedStringStore.setTranslatedString}
                 />
             </Col>
         </>

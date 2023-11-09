@@ -1,5 +1,6 @@
 import {makeAutoObservable} from "mobx";
 import axios from "axios";
+import getPhraseServerPath from "../utils/getPhraseServerPath";
 
 interface TranslatorResponse {
     responseData: ResponseData;
@@ -10,9 +11,6 @@ interface ResponseData {
 }
 
 class SelectedStringStore {
-    private translatorUrl = "https://api.mymemory.translated.net/get"
-    private serverUrl = "http://localhost:8086/api/phrases"
-
     selectedString = "";
     translatedString = "";
 
@@ -23,20 +21,21 @@ class SelectedStringStore {
     public translateString = async () => {
         if (this.selectedString) {
             const urlParams = new URLSearchParams([
-                ["q", this.selectedString], ["langpair", "en|ru"]
+                ["text", this.selectedString.trim()],
+                ["sl", "en"], ["dl", "ru"]
             ]);
 
-            const {data} = await axios.get<TranslatorResponse>(
-                this.translatorUrl, {params: urlParams}
+            const {data} = await axios.get<string>(
+                getPhraseServerPath("/api/translations"), {params: urlParams}
             );
 
-            this.translatedString = data.responseData.translatedText;
+            this.translatedString = data;
         }
     }
 
     public saveTranslation = async () => {
         await axios.post(
-            this.serverUrl, {
+            getPhraseServerPath("/api/phrases"), {
                 phrase: this.selectedString,
                 translation: this.translatedString
             }

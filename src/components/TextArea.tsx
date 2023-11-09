@@ -4,9 +4,10 @@ import Form from "react-bootstrap/Form";
 interface ITextArea {
     placeholder: string;
     value: string;
+    onChange: (str: string) => void;
 }
 
-const TextArea: FC<ITextArea> = ({ placeholder, value }) => {
+const TextArea: FC<ITextArea> = ({ placeholder, value, onChange }) => {
     const textAreaStyle: CSSProperties = {
         border: "none",
         resize: "none",
@@ -17,10 +18,10 @@ const TextArea: FC<ITextArea> = ({ placeholder, value }) => {
     return (
         <Form.Control
             style={textAreaStyle}
-            as="textarea"
-            rows={2}
+            as="textarea" rows={2}
             placeholder={placeholder}
             value={value}
+            onChange={e => onChange(e.target.value)}
         />
     );
 };
