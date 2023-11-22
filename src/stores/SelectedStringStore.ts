@@ -11,6 +11,9 @@ interface ResponseData {
 }
 
 class SelectedStringStore {
+    private phraseServiceUrlPrefix = "/phrase-service/api/phrases";
+    private translationServiceUrlPrefix = "/translation-service/api/translations";
+
     selectedString = "";
     translatedString = "";
 
@@ -26,7 +29,7 @@ class SelectedStringStore {
             ]);
 
             const {data} = await axios.get<string>(
-                getPhraseServerPath("/api/translations"), {params: urlParams}
+                getPhraseServerPath(this.translationServiceUrlPrefix), {params: urlParams}
             );
 
             this.translatedString = data;
@@ -35,7 +38,7 @@ class SelectedStringStore {
 
     public saveTranslation = async () => {
         await axios.post(
-            getPhraseServerPath("/api/phrases"), {
+            getPhraseServerPath(this.phraseServiceUrlPrefix), {
                 phrase: this.selectedString,
                 translation: this.translatedString
             }
